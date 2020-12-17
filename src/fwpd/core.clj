@@ -70,19 +70,14 @@
     ((get validations key) value)) suspect)
 )
 
-(def newSuspect {:name "Vlad Tepes" :glitter-index nil})
-(if (validate validations newSuspect)
-  (println "Valid")
-  (println "invalid"))
-
-; (defn append-suspect
-;   "Appends a name to the suspect list in the CSV File"
-;   [suspect]
-;   (if VALIDATE)
-;     (into map-suspects [suspect])
-;     "The name or glitter is invalid"
-;   )
-; )
+(defn append-suspect
+  "Appends a name to the suspect list in the CSV File"
+  [suspect]
+  (if (not (some false? (validate validations newSuspect)))
+    (into map-suspects [suspect])
+    (println "The name and/or glitter values are invalid")
+  )
+)
 
 (defn extract-names
   "Returns a list of names based on maps like {:name \"Edward Cullen\" :glitter-index 10}"
