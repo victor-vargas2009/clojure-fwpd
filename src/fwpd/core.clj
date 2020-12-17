@@ -38,10 +38,6 @@
   )
 )
 
-; (defn save
-;   "Save suspect list as CSV"  
-; )
-
 (defn mapify
   "Return a seq of maps like {:name \"Edward Cullen\" :glitter-index 10}"
   [rows]
@@ -52,27 +48,41 @@
                  (map vector vamp-keys unmapped-row)))
   rows))
 
+(def map-suspects (mapify (parse (slurp filename))))
+
 (defn validate-glitter
   "Validate glitter has a value and is a number"
   [value]
-  (instance? Integer value)
+  (and (instance? Long value) (not (= value nil)))
 )
 
 (defn validate-name
   "Validate name has a value and is a string"
   [value]
-  (instance? String value)
+  (and (instance? String value) (not (= value nil)))
 )
 
 (def validations {:name validate-name :glitter-index validate-glitter})
 
-(def map-suspects (mapify (parse (slurp filename))))
-
-(defn append-suspect
-  "Appends a name to the suspect list in the CSV File"
-  [suspect]
-  (parse (slurp filename))
+(defn validate
+  [validations suspect]
+  (map (fn [[key value]]
+    ((get validations key) value)) suspect)
 )
+
+(def newSuspect {:name "Vlad Tepes" :glitter-index nil})
+(if (validate validations newSuspect)
+  (println "Valid")
+  (println "invalid"))
+
+; (defn append-suspect
+;   "Appends a name to the suspect list in the CSV File"
+;   [suspect]
+;   (if VALIDATE)
+;     (into map-suspects [suspect])
+;     "The name or glitter is invalid"
+;   )
+; )
 
 (defn extract-names
   "Returns a list of names based on maps like {:name \"Edward Cullen\" :glitter-index 10}"
